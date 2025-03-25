@@ -1,0 +1,47 @@
+name: Ship
+
+on:
+  push:
+    branches: ['main']
+
+concurrency: production_environment
+
+jobs:
+  ship:
+    name: Ship
+
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+      url: https://laravel.hapideploy.com
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+
+      - name: Create pemfile
+        run: |
+          rm -f id_ed25519
+          echo "${{ secrets.HAPI_SSH_KEY }}" > id_ed25519
+          chmod 600 id_ed25519
+
+      - name: Create inventory file
+        run: |
+          rm -f inventory.yml && touch inventory.yml
+          echo 'hosts:' >> inventory.yml
+          echo '  app-server:' >> inventory.yml
+          echo '    host: ${{ secrets.HAPI_HOST_IP }}' >> inventory.yml
+          echo '    user: ${{ secrets.HAPI_USER }}' >> inventory.yml
+          echo "    pemfile: $PWD/id_ed25519" >> inventory.yml
+          echo '    with:' >> inventory.yml
+          echo '      deploy_path: ~/deploy/laravel/{{stage}}' >> inventory.yml
+          cat inventory.yml
+
+      - name: Install hapideploy
+        run: pip install hapideploy==0.1.0.dev2
+
+      - name: Run deploy task
+        run: hapi deploy app-server --stage=production --debug --options=node_version=20.18.0,php_version=8.4
