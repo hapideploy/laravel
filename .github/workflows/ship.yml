@@ -2,7 +2,7 @@ name: Ship
 
 on:
   push:
-#    branches: ['main']
+    branches: ['main']
 
 concurrency: production_environment
 
@@ -14,7 +14,7 @@ jobs:
 
     environment:
       name: production
-      url: https://ingest.dailydesk.app
+      url: https://laravel.hapideploy.com
 
     steps:
       - uses: actions/checkout@v4
