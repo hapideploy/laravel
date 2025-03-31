@@ -24,6 +24,7 @@ jobs:
 
       - name: Create pemfile
         run: |
+          cd .hapi
           rm -f id_ed25519
           echo "${{ secrets.HAPI_SSH_KEY }}" > id_ed25519
           chmod 600 id_ed25519
@@ -36,7 +37,7 @@ jobs:
           echo '  app-server:' >> inventory.yml
           echo '    host: ${{ secrets.HAPI_HOST_IP }}' >> inventory.yml
           echo '    user: ${{ secrets.HAPI_USER }}' >> inventory.yml
-          echo "    pemfile: $PWD/id_ed25519" >> inventory.yml
+          echo "    pemfile: $PWD/.hapi/id_ed25519" >> inventory.yml
           echo '    with:' >> inventory.yml
           echo '      deploy_path: ~/deploy/laravel/{{stage}}' >> inventory.yml
           cat inventory.yml
