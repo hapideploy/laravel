@@ -1,4 +1,4 @@
-name: tests
+name: Test
 
 on:
   push:
@@ -11,7 +11,9 @@ on:
       - main
 
 jobs:
-  ci:
+  pest:
+    name: Pest
+
     runs-on: ubuntu-latest
 
     steps:
@@ -49,5 +51,4 @@ jobs:
       - name: Build Assets
         run: npm run build
 
-      - name: Tests
-        run: ./vendor/bin/pest
+      - run: ./vendor/bin/pest --ci
