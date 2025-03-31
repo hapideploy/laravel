@@ -30,6 +30,7 @@ jobs:
 
       - name: Create inventory file
         run: |
+          cd .hapi
           rm -f inventory.yml && touch inventory.yml
           echo 'hosts:' >> inventory.yml
           echo '  app-server:' >> inventory.yml
@@ -41,7 +42,11 @@ jobs:
           cat inventory.yml
 
       - name: Install hapideploy
-        run: pip install hapideploy==0.1.0.dev2
+        run: pip install hapideploy==0.1.0.dev4
 
-      - name: Run deploy task
-        run: hapi deploy app-server --stage=production --debug --options=node_version=20.18.0,php_version=8.4
+      - name: Run the deploy command
+        run: |
+          cd .hapi && hapi deploy all \
+            --stage=production \
+            --debug \
+            --options=node_version=20.18.0,php_version=8.4
