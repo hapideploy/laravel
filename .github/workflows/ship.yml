@@ -4,7 +4,7 @@ on:
   push:
     branches: ['main']
 
-concurrency: production_environment
+concurrency: staging_environment
 
 jobs:
   ship:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: production
+      name: staging
       url: https://laravel.hapideploy.com
 
     steps:
@@ -22,32 +22,32 @@ jobs:
         with:
           python-version: 3.13
 
-      - name: Create pemfile
+      - name: Create id_github file
         run: |
-          cd .hapi
-          rm -f id_ed25519
-          echo "${{ secrets.HAPI_SSH_KEY }}" > id_ed25519
-          chmod 600 id_ed25519
+          mkdir -p ~/.ssh
+          rm -rf ~/.ssh/id_github && touch ~/.ssh/id_github
+          echo "${{ secrets.HAPI_SSH_KEY }}" > ~/.ssh/id_github
+          chmod 600 ~/.ssh/id_github
 
-      - name: Create inventory file
+      - name: Create inventory.yml file
         run: |
           cd .hapi
+
           rm -f inventory.yml && touch inventory.yml
-          echo 'hosts:' >> inventory.yml
-          echo '  app-server:' >> inventory.yml
-          echo '    host: ${{ secrets.HAPI_HOST_IP }}' >> inventory.yml
-          echo '    user: ${{ secrets.HAPI_USER }}' >> inventory.yml
-          echo "    pemfile: $PWD/id_ed25519" >> inventory.yml
-          echo '    with:' >> inventory.yml
-          echo '      deploy_path: ~/deploy/laravel/{{stage}}' >> inventory.yml
+
+          echo "hosts:" >> inventory.yml
+          echo "  app-server:" >> inventory.yml
+          echo "    host: ${{ secrets.HAPI_HOST_IP }}" >> inventory.yml
+          echo "    user: ${{ secrets.HAPI_SSH_USER }}" >> inventory.yml
+          echo "    pemfile: $HOME/.ssh/id_github" >> inventory.yml
+          echo "    with:" >> inventory.yml
+          echo "      deploy_path: ~/deploy/{{name}}/{{stage}}" >> inventory.yml
+
           cat inventory.yml
 
-      - name: Install hapideploy
-        run: pip install hapideploy==0.1.0.dev4
+      - name: Install hapideploy library
+        run: pip install hapideploy==${{ vars.HAPI_VERSION }}
 
       - name: Run the deploy command
         run: |
-          cd .hapi && hapi deploy all \
-            --stage=production \
-            --debug \
-            --options=node_version=20.18.0,php_version=8.4
+          cd .hapi && hapi deploy app-server --stage=staging --config=node_version=${{ vars.NODE_VERSION }},php_version=${{ vars.PHP_VERSION }} ${{ vars.HAPI_VERBOSE }}
