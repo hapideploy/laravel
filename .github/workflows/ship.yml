@@ -39,7 +39,7 @@ jobs:
           echo "  app-server:" >> inventory.yml
           echo "    host: ${{ secrets.HAPI_HOST_IP }}" >> inventory.yml
           echo "    user: ${{ secrets.HAPI_SSH_USER }}" >> inventory.yml
-          echo "    pemfile: $HOME/.ssh/id_github" >> inventory.yml
+          echo "    identity_file: $HOME/.ssh/id_github" >> inventory.yml
           echo "    with:" >> inventory.yml
           echo "      deploy_path: ~/deploy/{{name}}/{{stage}}" >> inventory.yml
 
