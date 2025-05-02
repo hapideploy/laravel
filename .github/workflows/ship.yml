@@ -35,7 +35,7 @@ jobs:
 
           rm -f inventory.yml && touch inventory.yml
 
-          echo "hosts:" >> inventory.yml
+          echo "remotes:" >> inventory.yml
           echo "  app-server:" >> inventory.yml
           echo "    host: ${{ secrets.HAPI_HOST_IP }}" >> inventory.yml
           echo "    user: ${{ secrets.HAPI_SSH_USER }}" >> inventory.yml
