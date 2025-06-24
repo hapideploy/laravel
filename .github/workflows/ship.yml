@@ -24,10 +24,9 @@ jobs:
 
       - name: Create id_github file
         run: |
-          mkdir -p ~/.ssh
-          rm -rf ~/.ssh/id_github && touch ~/.ssh/id_github
-          echo "${{ secrets.HAPI_SSH_KEY }}" > ~/.ssh/id_github
-          chmod 600 ~/.ssh/id_github
+          rm -rf id_github
+          echo "${{ secrets.HAPI_SSH_KEY }}" > id_github
+          chmod 600 id_github
 
       - name: Create inventory.yml file
         run: |

@@ -2,7 +2,7 @@ remotes:
   app-server:
     host: 192.168.33.11
     user: vagrant
-    identity_file: $HOME/.ssh/id_github
+    identity_file: ./id_github
 
 recipes:
   - laravel
