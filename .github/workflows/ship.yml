@@ -7,9 +7,7 @@ on:
 concurrency: staging_environment
 
 jobs:
-  ship:
-    name: Ship
-
+  staging:
     runs-on: ubuntu-latest
 
     environment:
@@ -22,13 +20,13 @@ jobs:
         with:
           python-version: 3.13
 
-      - name: Create id_github file
+      - name: Create the id_github (pem) file
         run: |
           rm -rf id_github
           echo "${{ secrets.HAPI_SSH_KEY }}" > id_github
           chmod 600 id_github
 
-      - name: Create inventory.yml file
+      - name: Prepare the hapi.yml file
         run: |
           sed -i 's/192.168.33.11/${{ secrets.HAPI_HOST_IP }}/g' hapi.yml
           sed -i 's/vagrant/${{ secrets.HAPI_SSH_USER }}/g' hapi.yml
