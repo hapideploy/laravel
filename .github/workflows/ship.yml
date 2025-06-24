@@ -31,23 +31,13 @@ jobs:
 
       - name: Create inventory.yml file
         run: |
-          cd .hapi
+          sed -i 's/192.168.33.11/${{ secrets.HAPI_HOST_IP }}/g' hapi.yml
+          sed -i 's/vagrant/${{ secrets.HAPI_SSH_USER }}/g' hapi.yml
+          cat hapi.yml
 
-          rm -f inventory.yml && touch inventory.yml
-
-          echo "remotes:" >> inventory.yml
-          echo "  app-server:" >> inventory.yml
-          echo "    host: ${{ secrets.HAPI_HOST_IP }}" >> inventory.yml
-          echo "    user: ${{ secrets.HAPI_SSH_USER }}" >> inventory.yml
-          echo "    identity_file: $HOME/.ssh/id_github" >> inventory.yml
-          echo "    with:" >> inventory.yml
-          echo "      deploy_path: ~/deploy/{{name}}/{{stage}}" >> inventory.yml
-
-          cat inventory.yml
-
-      - name: Install hapideploy library
-        run: pip install hapideploy==${{ vars.HAPI_VERSION }}
+      - name: Install the hapideploy library
+        run: pip install hapideploy
 
       - name: Run the deploy command
         run: |
-          cd .hapi && hapi deploy app-server --stage=staging --config=node_version=${{ vars.NODE_VERSION }},php_version=${{ vars.PHP_VERSION }} ${{ vars.HAPI_VERBOSE }}
+          hapi deploy app-server --stage=staging --config=node_version=${{ vars.NODE_VERSION }},php_version=${{ vars.PHP_VERSION }}

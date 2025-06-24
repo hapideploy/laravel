@@ -1,0 +1,18 @@
+remotes:
+  app-server:
+    host: 192.168.33.11
+    user: vagrant
+    identity_file: $HOME/.ssh/id_github
+
+recipes:
+  - laravel
+
+config:
+  deploy_path:
+    put: ~/deploy/{{name}}/{{stage}}
+  name:
+    put: laravel
+  repository:
+    put: 'https://github.com/hapideploy/laravel'
+  branch:
+    put: 'main'
