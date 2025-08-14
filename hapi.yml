@@ -9,10 +9,19 @@ recipes:
 
 config:
   deploy_path:
-    put: ~/deploy/{{name}}/{{stage}}
+    put: ~/{{name}}
   name:
     put: laravel
   repository:
     put: 'https://github.com/hapideploy/laravel'
   branch:
     put: 'main'
+
+tasks:
+  'deploy:queue':
+    desc: 'Restart Laravel queue workers'
+    run:
+      - cd {{current_path}} && {{bin/php}} artisan queue:restart
+
+after:
+  'deploy:symlink': 'deploy:queue'
