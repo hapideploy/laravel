@@ -19,22 +19,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.13
-
-      - name: Create the id_github (pem) file
-        run: |
-          rm -rf id_github
-          echo "${{ secrets.HAPI_SSH_KEY }}" > id_github
-          chmod 600 id_github
-
-      - name: Prepare the hapi.yml file
-        run: |
-          sed -i 's/192.168.33.11/${{ secrets.HAPI_HOST_IP }}/g' hapi.yml
-          sed -i 's/vagrant/${{ secrets.HAPI_SSH_USER }}/g' hapi.yml
-          cat hapi.yml
-
-      - name: Install the hapideploy library
-        run: pip install hapideploy
-
+      - uses: hapideploy/action@v1
+        with:
+          host: ${{ secrets.HAPI_HOST_IP }}
+          user: ${{ secrets.HAPI_SSH_USER }}
+          identity-key: ${{ secrets.HAPI_SSH_KEY }}
       - name: Run the deploy command
         run: |
-          hapi deploy app-server --stage=staging --config=node_version=${{ vars.NODE_VERSION }},php_version=${{ vars.PHP_VERSION }}
+          hapi deploy --stage=staging \
+            --config=node_version=${{ vars.NODE_VERSION }},php_version=${{ vars.PHP_VERSION }}
